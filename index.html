@@ -1,0 +1,870 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Cipher⁷³ — ملخص المحاسبة المالية</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700&family=IBM+Plex+Sans+Arabic:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --void:#14171a; --panel:#1b1f24; --panel-alt:#21262c;
+    --border:#2b3238; --border-soft:#242a30;
+    --text:#dfe4e8; --text-dim:#8a9298; --text-faint:#565e64;
+    --olive:#9db571; --olive-soft:rgba(157,181,113,0.12);
+    --blue:#6cb2eb; --blue-soft:rgba(108,178,235,0.1);
+    --gold:#d9b56c; --gold-soft:rgba(217,181,108,0.12);
+    --amber:#e0a458; --amber-soft:rgba(224,164,88,0.12);
+    --mono:'JetBrains Mono', monospace; --sans:'IBM Plex Sans Arabic', sans-serif;
+  }
+  *{box-sizing:border-box; margin:0; padding:0;}
+  html{scroll-behavior:smooth;}
+  body{background:var(--void); color:var(--text); font-family:var(--sans); min-height:100vh; line-height:1.75;}
+  ::selection{background:var(--olive-soft); color:var(--olive);}
+
+  .topbar{display:flex; align-items:center; gap:16px; padding:14px 24px; background:var(--panel); border-bottom:1px solid var(--border); position:sticky; top:0; z-index:30; flex-wrap:wrap;}
+  .logo{font-family:var(--mono); font-weight:700; font-size:1.15rem; letter-spacing:0.5px; color:var(--text); direction:ltr; display:flex; align-items:center;}
+  .logo .exp{color:var(--olive); font-size:0.7em; vertical-align:super; margin-inline-start:2px;}
+  .logo::before{content:'>_'; color:var(--blue); margin-inline-end:8px; font-weight:600;}
+  .tagline{font-family:var(--sans); font-size:0.75rem; color:var(--text-faint); display:none;}
+  @media(min-width:900px){ .tagline{display:block;} }
+
+  .header-progress{padding:14px 24px 18px; background:var(--panel); border-bottom:1px solid var(--border);}
+  .hp-top{display:flex; align-items:center; justify-content:space-between; margin-bottom:8px; flex-wrap:wrap; gap:8px;}
+  .hp-label{font-family:var(--mono); font-size:0.72rem; color:var(--text-dim);}
+  .hp-motivate{font-family:var(--sans); font-size:0.85rem; font-weight:600; color:var(--olive);}
+  .hp-track{position:relative; height:12px; background:var(--panel-alt); border:1px solid var(--border); border-radius:6px; overflow:visible;}
+  .hp-fill{height:100%; width:0%; background:linear-gradient(90deg, var(--blue), var(--olive)); border-radius:6px 0 0 6px; transition:width .6s ease;}
+  .hp-milestone{position:absolute; top:-4px; width:2px; height:20px; background:var(--border); }
+  .hp-milestone .m-label{position:absolute; top:22px; font-family:var(--mono); font-size:0.62rem; color:var(--text-faint); transform:translateX(50%); right:0;}
+  .hp-milestone.passed{background:var(--olive);}
+  .hp-milestone.passed .m-label{color:var(--olive);}
+
+  .layout{display:flex; align-items:flex-start; min-height:calc(100vh - 118px);}
+  .sidebar{width:280px; flex-shrink:0; background:var(--panel); border-inline-start:1px solid var(--border); padding:14px 0; position:sticky; top:118px; height:calc(100vh - 118px); overflow-y:auto;}
+  .sidebar-title{font-family:var(--mono); font-size:0.68rem; letter-spacing:1.5px; color:var(--text-faint); padding:6px 18px 10px; text-transform:uppercase;}
+
+  .lesson-item{display:flex; align-items:center; gap:10px; padding:11px 18px; font-family:var(--mono); font-size:0.78rem; color:var(--text-dim); cursor:pointer; border-inline-start:2px solid transparent; direction:ltr; text-align:left;}
+  .lesson-item:hover{background:var(--panel-alt);}
+  .lesson-item.locked{color:var(--text-faint); cursor:not-allowed;}
+  .lesson-item.locked:hover{background:transparent;}
+  .lesson-item.active{background:var(--olive-soft); color:var(--olive); border-inline-start-color:var(--olive);}
+  .lesson-item .fname{flex:1; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;}
+  .lesson-item .num{color:var(--text-faint); font-size:0.7rem;}
+
+  .final-exam-row{display:flex; flex-direction:column; gap:3px; padding:14px 18px; margin-top:8px; border-top:1px solid var(--border); opacity:0.55; font-family:var(--mono); font-size:0.8rem; color:var(--text-dim);}
+  .final-exam-row.ready{opacity:1; color:var(--gold); cursor:pointer; background:var(--gold-soft);}
+  .final-exam-row .tag{font-family:var(--sans); direction:rtl; text-align:right; font-size:0.7rem; color:var(--text-faint);}
+  .final-exam-row.ready .tag{color:var(--gold);}
+
+  .editor{flex:1; min-width:0;}
+  .tabbar{display:flex; background:var(--panel); border-bottom:1px solid var(--border);}
+  .tab{font-family:var(--mono); font-size:0.8rem; direction:ltr; padding:12px 20px; color:var(--text); background:var(--void); border-inline-end:1px solid var(--border); display:flex; align-items:center; gap:8px;}
+  .tab .dot{width:7px; height:7px; border-radius:50%; background:var(--blue);}
+
+  .content-wrap{padding:28px 32px 90px; max-width:900px; margin:0 auto;}
+  .level-heading{font-size:1.5rem; font-weight:700; color:var(--text); margin-bottom:4px;}
+  .level-sub{font-family:var(--sans); font-size:0.88rem; color:var(--text-faint); margin-bottom:24px;}
+
+  .section-title{font-size:1.05rem; font-weight:700; color:var(--blue); margin:22px 0 10px; display:flex; align-items:center; gap:8px;}
+  .section-title:first-of-type{margin-top:0;}
+  .block{padding:16px 18px; border-radius:8px; border:1px solid var(--border-soft); background:var(--panel); margin-bottom:16px;}
+  .block p{color:var(--text); font-size:0.97rem; margin-bottom:8px;}
+  .block p:last-child{margin-bottom:0;}
+  .block b, .block strong{color:var(--olive); font-weight:700;}
+  .block ul, .block ol{margin-inline-start:20px; margin-top:6px;}
+  .block li{margin-bottom:6px; font-size:0.95rem; color:var(--text);}
+
+  .scenario-box{border:1px solid var(--gold); border-inline-start:4px solid var(--gold); background:linear-gradient(180deg, var(--gold-soft), transparent 50%); border-radius:8px; padding:18px 20px; margin:20px 0 26px;}
+  .scenario-label{font-family:var(--mono); font-size:0.78rem; color:var(--gold); display:flex; align-items:center; gap:8px; margin-bottom:10px; font-weight:700;}
+  .scenario-box p{color:var(--text); font-size:0.96rem; margin-bottom:10px;}
+  .scenario-box p:last-child{margin-bottom:0;}
+  .scenario-box .entry{
+    font-family:var(--mono); font-size:0.82rem; direction:ltr; text-align:left;
+    background:var(--panel-alt); border:1px solid var(--border); border-radius:6px;
+    padding:8px 12px; margin:6px 0; color:var(--olive); display:inline-block;
+  }
+  .scenario-box b{color:var(--gold);}
+
+  .run-quiz-btn{font-family:var(--mono); font-size:0.9rem; font-weight:600; background:var(--olive-soft); color:var(--olive); border:1px solid var(--olive); border-radius:8px; padding:14px 24px; cursor:pointer; margin-top:10px; display:flex; align-items:center; gap:10px; direction:ltr; transition:transform .15s, background .15s;}
+  .run-quiz-btn:hover{background:var(--olive); color:var(--void);}
+  .run-quiz-btn:focus-visible, button:focus-visible, .lesson-item:focus-visible{outline:2px solid var(--blue); outline-offset:2px;}
+  .run-quiz-btn:active{transform:scale(0.98);}
+
+  .lesson-complete-banner{margin-top:20px; padding:16px 18px; border-radius:8px; border:1px solid var(--olive); background:var(--olive-soft); color:var(--olive); font-family:var(--sans); font-size:0.9rem; font-weight:600; display:flex; align-items:center; gap:10px;}
+
+  .quiz-overlay{position:fixed; inset:0; background:rgba(10,12,14,0.78); display:none; align-items:center; justify-content:center; z-index:100; padding:16px;}
+  .quiz-overlay.open{display:flex;}
+  .quiz-modal{width:100%; max-width:640px; max-height:88vh; background:#0e1013; border:1px solid var(--border); border-radius:12px; overflow:hidden; display:flex; flex-direction:column; box-shadow:0 8px 50px rgba(0,0,0,0.55);}
+  .quiz-header{display:flex; align-items:center; gap:12px; padding:14px 18px; background:var(--panel); border-bottom:1px solid var(--border);}
+  .quiz-header-title{font-family:var(--mono); font-size:0.8rem; color:var(--text-dim);}
+  .quiz-counter{margin-inline-start:auto; font-family:var(--mono); font-size:0.75rem; color:var(--blue); background:var(--blue-soft); padding:3px 10px; border-radius:20px;}
+  .quiz-close{background:none; border:none; color:var(--text-faint); font-family:var(--mono); cursor:pointer; font-size:0.85rem;}
+  .quiz-body{padding:22px; overflow-y:auto;}
+  .quiz-question{font-size:1.05rem; color:var(--text); line-height:1.8; margin-bottom:18px; font-weight:600;}
+  .opt-btn{display:flex; align-items:center; gap:10px; width:100%; background:var(--panel); border:1px solid var(--border); color:var(--text); font-family:var(--sans); font-size:0.95rem; padding:13px 15px; border-radius:8px; margin-bottom:10px; cursor:pointer; direction:rtl; text-align:right; transition:border-color .15s, background .15s;}
+  .opt-btn .tag{font-family:var(--mono); color:var(--text-faint); direction:ltr;}
+  .opt-btn:hover{border-color:var(--blue); background:var(--blue-soft);}
+  .opt-btn.correct{border-color:var(--olive); background:var(--olive-soft); color:var(--olive);}
+  .opt-btn.wrong{border-color:var(--amber); background:var(--amber-soft); color:var(--amber);}
+  .opt-btn:disabled{cursor:default;}
+
+  .result-log{margin-top:16px; padding:14px 16px; border-radius:8px; font-family:var(--sans); font-size:0.92rem; line-height:1.8; animation:fadein .25s ease; font-weight:600;}
+  @keyframes fadein{from{opacity:0; transform:translateY(4px);} to{opacity:1; transform:translateY(0);}}
+  .result-log.pass{background:var(--olive-soft); border:1px solid var(--olive); color:var(--olive);}
+  .result-log.fail{background:var(--amber-soft); border:1px solid var(--amber); color:var(--amber);}
+  .next-btn{margin-top:14px; width:100%; padding:13px; border-radius:8px; background:var(--olive); color:var(--void); border:none; font-family:var(--sans); font-weight:700; font-size:0.92rem; cursor:pointer;}
+
+  .summary-score{font-size:2.2rem; font-weight:800; text-align:center; margin-bottom:6px; font-family:var(--mono);}
+  .summary-msg{text-align:center; font-size:1.05rem; font-weight:700; margin-bottom:18px;}
+  .summary-msg.pass{color:var(--olive);} .summary-msg.fail{color:var(--amber);}
+  .summary-sub{text-align:center; color:var(--text-dim); font-size:0.85rem; margin-bottom:20px;}
+
+  @media (prefers-reduced-motion: reduce){ *{animation:none !important; transition:none !important;} }
+
+  @media(max-width:760px){
+    .layout{flex-direction:column;}
+    .sidebar{width:100%; height:auto; position:static; border-inline-start:none; border-bottom:1px solid var(--border); max-height:40vh;}
+    .content-wrap{padding:20px 16px 80px;}
+    .header-progress{padding:12px 16px 16px;}
+  }
+</style>
+</head>
+<body>
+
+  <div class="topbar">
+    <div class="logo">Cipher<span class="exp">73</span></div>
+    <div class="tagline">منصة تعلّم المحاسبة المالية بأسلوب تفاعلي</div>
+  </div>
+
+  <div class="header-progress">
+    <div class="hp-top">
+      <span class="hp-label" id="hpLabel">التقدم الكلي: 0 / 11 دروس</span>
+      <span class="hp-motivate" id="hpMotivate">يلا نبدأ! 🚀</span>
+    </div>
+    <div class="hp-track">
+      <div class="hp-fill" id="hpFill"></div>
+      <div class="hp-milestone" style="right:25%;"><span class="m-label">25%</span></div>
+      <div class="hp-milestone" style="right:50%;"><span class="m-label">50%</span></div>
+      <div class="hp-milestone" style="right:75%;"><span class="m-label">75%</span></div>
+      <div class="hp-milestone" style="right:100%;"><span class="m-label">100%</span></div>
+    </div>
+  </div>
+
+  <div class="layout">
+    <aside class="sidebar">
+      <div class="sidebar-title">الدروس (11)</div>
+      <div id="lessonList"></div>
+      <div class="final-exam-row" id="finalExamRow">
+        <div style="display:flex;align-items:center;gap:8px;"><span id="finalExamIcon">🔒</span><span>الاختبار النهائي الشامل</span></div>
+        <span class="tag" id="finalExamTag">يُفتح بعد اجتياز الدروس الـ 11</span>
+      </div>
+      <button id="resetProgressBtn" style="width:100%; margin-top:10px; background:none; border:1px dashed var(--border); color:var(--text-faint); font-family:var(--mono); font-size:0.7rem; padding:8px; border-radius:6px; cursor:pointer;">🔄 إعادة تعيين التقدم</button>
+      <div id="syncNote" style="font-family:var(--mono); font-size:0.62rem; color:var(--text-faint); text-align:center; padding:8px 12px 0;">التقدم يُحفظ تلقائياً</div>
+    </aside>
+
+    <main class="editor">
+      <div class="tabbar" id="tabbar"></div>
+      <div class="content-wrap" id="contentWrap"></div>
+    </main>
+  </div>
+
+  <div class="quiz-overlay" id="quizOverlay">
+    <div class="quiz-modal">
+      <div class="quiz-header">
+        <div class="quiz-header-title" id="quizHeaderTitle">اختبار الدرس</div>
+        <span class="quiz-counter" id="quizCounter">1 / 3</span>
+        <button class="quiz-close" id="quizClose">✕ إغلاق</button>
+      </div>
+      <div class="quiz-body" id="quizBody"></div>
+    </div>
+  </div>
+
+<script>
+/* =========================================================
+   المحتوى الأكاديمي الكامل — 11 درساً، 25 شريحة
+   كل درس: أقسام أكاديمية دقيقة + سيناريو عملي (TechCart / NexaSoft) + بنك أسئلة (6) يُسحب منه 3 عشوائياً
+   ========================================================= */
+const LESSONS = [
+{
+  id:1, title:'أساسيات ونشأة المحاسبة', file:'الدرس 01 — الأساسيات والنشأة',
+  sections:[
+    { heading:'نشأة المحاسبة وتطورها التاريخي', html:`
+      <p>بدأت المحاسبة منذ العصور القديمة استجابةً لحاجة البشر لنظام يسجّل العمليات التبادلية (نظام المقايضة في ميلانو بإيطاليا، واليونان، ومصر القديمة) حتى ظهور النقود كوسيلة تبادل وقياس.</p>
+      <p><b>مراحل التطور (4 مراحل):</b></p>
+      <ul>
+        <li><b>المرحلة الفنية:</b> تمييز المتحصلات (+) عن المدفوعات (-)، وصولاً لمصطلحي مدين (Debit) ودائن (Credit).</li>
+        <li><b>المرحلة المهنية والأكاديمية:</b> ظهور الجمعيات المهنية، وإسهام لوكا باشيلو بوضع نظرية القيد المزدوج عام 1494م.</li>
+        <li><b>مرحلة نظام المعلومات:</b> ظهور المحاسبة الإدارية لدعم اتخاذ القرارات.</li>
+        <li><b>مرحلة المسؤولية الاجتماعية:</b> التحول من تعظيم الأرباح فقط إلى مراعاة رفاهية المجتمع.</li>
+      </ul>` },
+    { heading:'مفهوم المحاسبة وأهدافها الأساسية', html:`
+      <p><b>المفهوم:</b> علم من العلوم الاجتماعية يعتمد على فروض ومبادئ لتسجيل وتبويب وتلخيص العمليات المالية، بهدف تحديد نتيجة الأعمال وتصوير المركز المالي ودعم القرارات.</p>
+      <p><b>الأهداف السبعة الرئيسية:</b></p>
+      <ul>
+        <li>الاحتفاظ بسجلات دقيقة للعمليات المالية.</li>
+        <li>تحديد نتيجة الأعمال وإعداد الميزانية العمومية.</li>
+        <li>دعم وظائف الإدارة (تخطيط، رقابة، تقويم أداء).</li>
+        <li>قياس كفاءة الإدارة في تحقيق أهدافها.</li>
+        <li>توفير المعلومات اللازمة لمستخدمي القوائم المالية.</li>
+        <li>حماية أصول الوحدة من السرقة والضياع.</li>
+        <li>المساهمة في تحقيق الرفاهية الاجتماعية.</li>
+      </ul>` },
+    { heading:'الفروض المحاسبية', html:`
+      <ul>
+        <li><b>فرضية الوحدة المحاسبية (الشخصية المعنوية):</b> المشروع له شخصية مستقلة تماماً عن مُلاّكه، وله حق التملك والتقاضي باسمه.</li>
+        <li><b>فرضية الاستمرارية:</b> افتراض أن الوحدة المحاسبية مستمرة في مزاولة نشاطها لأجل غير مسمى.</li>
+        <li><b>فرضية الدورية:</b> تقسيم حياة المشروع المستمر إلى فترات زمنية دورية (سنة مالية) لقياس الأداء.</li>
+        <li><b>فرضية وحدة القياس النقدي:</b> لا يتم تسجيل أي عملية في الدفاتر إلا إذا أمكن التعبير عنها وقياسها بوحدات النقد.</li>
+      </ul>` }
+  ],
+  scenario:{
+    title:'💼 تطبيق عملي — كيف بدأ أحمد متجره الإلكتروني TechCart',
+    html:`<p>قرر أحمد تأسيس <b>TechCart</b>، متجر إلكتروني لبيع الأجهزة التقنية (لابتوبات، هواتف، إكسسوارات). أول قرار اتخذه كان فتح <b>حساب بنكي مستقل باسم الشركة</b>، منفصل تماماً عن حسابه الشخصي — تطبيقاً لـ<b>فرضية الوحدة المحاسبية</b>: أموال TechCart وأموال أحمد الشخصية عالمان منفصلان محاسبياً، حتى لو كان هو المالك الوحيد.</p>
+    <p>يخطط أحمد لتشغيل TechCart لسنوات طويلة قادمة دون نية تصفية قريبة — هذا هو تطبيق <b>فرضية الاستمرارية</b>. ومع ذلك، هو لا ينتظر سنوات ليعرف نتيجة أعماله؛ فهو يُغلق حساباته في 31 ديسمبر من كل عام ويُعِد قوائم مالية سنوية — تطبيقاً لـ<b>فرضية الدورية</b>.</p>
+    <p>وعندما يستلم شحنة أجهزة، لا يسجلها في دفاتره إلا بعد تحويل قيمتها لمبلغ نقدي محدد بالريال — لأن <b>فرضية وحدة القياس النقدي</b> تمنع تسجيل أي شيء لا يمكن التعبير عنه بالنقود (مثل "حماس الفريق" أو "سمعة المتجر" التي لا تُقاس نقدياً رغم أهميتها).</p>
+    <p>ولأن أحمد يحتاج معرفة هل TechCart رابح فعلاً، ويريد حماية مخزون الأجهزة الثمين من السرقة، فهو هنا يحقق مباشرة اثنين من الأهداف السبعة للمحاسبة.</p>`
+  },
+  bank:[
+    { q:'في أي سنة تقريباً وضع لوكا باشيلو أساس نظرية القيد المزدوج؟', options:['1494م','1776م','1929م','2008م'], correct:0 },
+    { q:'ما هما المصطلحان اللذان نتجا عن "المرحلة الفنية" في تطور المحاسبة؟', options:['مدين ودائن (Debit & Credit)','أصول وخصوم','إيراد ومصروف','ربح وخسارة'], correct:0 },
+    { q:'أي مرحلة من مراحل تطور المحاسبة أدخلت مفهوم المحاسبة الإدارية لدعم اتخاذ القرار؟', options:['المرحلة الفنية','المرحلة المهنية والأكاديمية','مرحلة نظام المعلومات','مرحلة المسؤولية الاجتماعية'], correct:2 },
+    { q:'أحمد صاحب TechCart فتح حساباً بنكياً منفصلاً باسم الشركة عن حسابه الشخصي. أي فرضية محاسبية طبّقها؟', options:['فرضية الاستمرارية','فرضية الدورية','فرضية الوحدة المحاسبية','فرضية وحدة القياس النقدي'], correct:2 },
+    { q:'أي هدف من أهداف المحاسبة السبعة يرتبط مباشرة بمنع سرقة مخزون TechCart من الأجهزة؟', options:['تحديد نتيجة الأعمال','حماية أصول الوحدة من السرقة والضياع','قياس كفاءة الإدارة','المساهمة في الرفاهية الاجتماعية'], correct:1 },
+    { q:'وفقاً لفرضية الدورية، لماذا يُقفل TechCart حساباته في 31 ديسمبر رغم استمرار نشاطه طوال العام؟', options:['لتقسيم النشاط المستمر إلى فترات زمنية لقياس الأداء دورياً','لأن القانون يجبر جميع الشركات على ذلك فقط','لتقليل الضرائب حصراً','لا يوجد سبب محاسبي لذلك'], correct:0 }
+  ]
+},
+{
+  id:2, title:'المبادئ والمعادلة المحاسبية', file:'الدرس 02 — المبادئ والمعادلة',
+  sections:[
+    { heading:'المبادئ والمفاهيم والأسس المحاسبية', html:`
+      <p><b>المبادئ المحاسبية:</b></p>
+      <ul>
+        <li><b>التكلفة التاريخية:</b> تسجيل الأصول بتكلفة شرائها الأصلية ناقصاً الإهلاك.</li>
+        <li><b>المقابلة:</b> تحميل إيرادات الفترة بالمصروفات التي ساهمت في تحقيقها.</li>
+        <li><b>الثبات:</b> الاستقرار على اتباع نفس السياسات المحاسبية من فترة لأخرى لتمكين المقارنة.</li>
+        <li><b>الموضوعية:</b> الاعتماد على أدلة ومستندات موضوعية بعيداً عن التحيز الشخصي.</li>
+        <li><b>تحقق الإيراد:</b> لا يُسجل الإيراد إلا عند تحقق الخدمة أو انتقال الملكية فعلياً.</li>
+      </ul>
+      <p><b>المفاهيم المحاسبية:</b> الأصول (ممتلكات)، الخصوم (التزامات)، الإيرادات، المصروفات، رأس المال، الفترة المالية.</p>
+      <p><b>الأسس:</b> الأساس النقدي (التسجيل عند الدفع أو القبض الفعلي)، والأساس الاستحقاقي (التسجيل عند نشوء الحق أو الالتزام — وهو المتبع في المحاسبة المالية).</p>` },
+    { heading:'نظرية القيد المزدوج والمعادلة المحاسبية', html:`
+      <p><b>نظرية القيد المزدوج:</b> كل عملية مالية لها طرفان متساويان في القيمة: طرف عاطي (دائن) وطرف آخذ (مدين).</p>
+      <p><b>المعادلة المحاسبية:</b> <span style="color:var(--olive); font-weight:700;">الأصول = رأس المال + الخصوم</span></p>
+      <p><b>تصنيفات الأصول:</b> ثابتة (أراضٍ، مبانٍ، سيارات)، متداولة (بضاعة، مدينون، أوراق قبض، بنك)، معنوية (شهرة المحل، براءة الاختراع).</p>
+      <p><b>تصنيفات الخصوم:</b> طويلة الأجل (قروض مصرفية)، قصيرة الأجل (دائنون، أوراق دفع، سحب على المكشوف).</p>` }
+  ],
+  scenario:{
+    title:'💼 تطبيق عملي — شركة NexaSoft الناشئة للبرمجيات',
+    html:`<p>أسّست مها شركة <b>NexaSoft</b> لتطوير تطبيقات إدارة المخزون للمتاجر الصغيرة. اشترت سيرفراً بقيمة 20,000 ريال، وسجّلته في دفاترها بهذه القيمة بالضبط رغم أن سعره في السوق ارتفع لاحقاً — تطبيقاً لـ<b>مبدأ التكلفة التاريخية</b>.</p>
+    <p>عندما وقّعت NexaSoft عقد اشتراك سنوي مسبق الدفع مع أحد العملاء بقيمة 12,000 ريال، لم تُسجل الإيراد كاملاً فور استلام المبلغ، بل قسّمته على 12 شهراً وسجّلت 1,000 ريال كل شهر يُقدَّم فيه الاشتراك فعلياً — تطبيقاً لـ<b>مبدأ تحقق الإيراد</b> والأساس الاستحقاقي معاً.</p>
+    <p>وحين احتاجت لحساب تكلفة تطوير أحد المنتجات، طرحت مرتبات المبرمجين ومصاريف الاستضافة لنفس الفترة التي حقق فيها المنتج إيراده — تطبيقاً لـ<b>مبدأ المقابلة</b>. كما التزمت باستخدام نفس طريقة حساب الإهلاك لأجهزتها كل عام دون تغيير مفاجئ — تطبيقاً لـ<b>مبدأ الثبات</b>.</p>
+    <p>في ميزانية NexaSoft: السيرفر (أصل ثابت) والنقدية (أصل متداول) يُموَّلان معاً من رأس مال مها والقرض المصرفي الذي حصلت عليه — أي أن: <span style="color:var(--olive);">الأصول = رأس المال + الخصوم</span>، بالضبط كما تنص المعادلة المحاسبية.</p>`
+  },
+  bank:[
+    { q:'أي مبدأ محاسبي يقضي بتسجيل الأصل بسعر شرائه الفعلي وقت الحصول عليه، وليس بسعره الحالي في السوق؟', options:['مبدأ المقابلة','مبدأ التكلفة التاريخية','مبدأ الثبات','مبدأ الموضوعية'], correct:1 },
+    { q:'لو غيّرت NexaSoft طريقة حساب إهلاك أصولها كل سنة بلا مبرر موثّق، أي مبدأ تكون قد خالفته؟', options:['مبدأ الثبات','مبدأ الموضوعية','مبدأ التكلفة التاريخية','مبدأ تحقق الإيراد'], correct:0 },
+    { q:'ما هي المعادلة المحاسبية الأساسية؟', options:['الأصول = الخصوم − رأس المال','الأصول = رأس المال + الخصوم','رأس المال = الأصول + الخصوم','الخصوم = الأصول + رأس المال'], correct:1 },
+    { q:'استلمت NexaSoft كامل قيمة اشتراك سنوي مقدماً من عميل. متى يجب تسجيل هذا الإيراد وفق مبدأ تحقق الإيراد؟', options:['فوراً بالكامل عند استلام المبلغ نقداً','تدريجياً كل شهر يُقدَّم فيه الاشتراك فعلياً','دفعة واحدة في نهاية السنة','لا يُسجل نهائياً حتى انتهاء العقد'], correct:1 },
+    { q:'السيرفر الذي اشترته NexaSoft يُصنَّف ضمن أي نوع من الأصول؟', options:['أصول متداولة','أصول ثابتة','أصول معنوية','ليس أصلاً محاسبياً'], correct:1 },
+    { q:'القرض المصرفي الذي حصلت عليه NexaSoft لتمويل معداتها يُصنَّف غالباً ضمن؟', options:['أصول ثابتة','خصوم متداولة','خصوم طويلة الأجل','رأس المال'], correct:2 }
+  ]
+},
+{
+  id:3, title:'الدورة المحاسبية والدفاتر', file:'الدرس 03 — الدورة والدفاتر',
+  sections:[
+    { heading:'الدورة المحاسبية', html:`
+      <p>الخطوات المتسلسلة لتسجيل ومعالجة البيانات المالية لإنتاج القوائم المالية:</p>
+      <ol>
+        <li>استلام وإعداد المستندات الأصلية المؤيدة للعمليات المالية.</li>
+        <li>تحليل العمليات وتسجيلها كقيود في دفتر اليومية.</li>
+        <li>الترحيل من دفتر اليومية إلى حسابات دفتر الأستاذ وترصيدها.</li>
+        <li>إعداد ميزان المراجعة قبل التسويات.</li>
+        <li>إجراء التسويات الجردية في نهاية الفترة وإثباتها.</li>
+        <li>ترحيل قيود التسويات لدفتر الأستاذ وإعداد ميزان المراجعة المعدل.</li>
+        <li>إعداد القوائم المالية (المتاجرة، الأرباح والخسائر، الميزانية العمومية).</li>
+        <li>إثبات قيود الإقفال للحسابات الوهمية (الإيرادات والمصروفات).</li>
+      </ol>` },
+    { heading:'الدفاتر المحاسبية وميزان المراجعة', html:`
+      <p><b>دفتر اليومية:</b> أول دفتر تُسجل فيه العمليات بتسلسل زمني. يتكون من أعمدة: مدين، دائن، البيان (يحتوي على اسم الحساب المدين والدائن وشرح العملية)، رقم القيد، رقم المستند، والتاريخ.</p>
+      <p><b>دفتر الأستاذ:</b> يُرحل إليه من اليومية، ويأخذ شكل حرف T (أو جدول) لكل حساب على حدة. يضم جانبين: الجانب الأيمن (منه) والجانب الأيسر (له)، حيث يُرحل المبلغ والبيان والتاريخ لترصيد الحساب.</p>
+      <p><b>ميزان المراجعة:</b> كشف يضم جميع الحسابات بأرصدتها (أو مجاميعها). يجب أن يتساوى مجموع الأرصدة المدينة مع الدائنة. عدم التساوي يؤكد وجود خطأ، لكن التساوي لا يمنع وجود أخطاء متكافئة.</p>` }
+  ],
+  scenario:{
+    title:'💼 تطبيق عملي — إغلاق شهر في دفاتر TechCart',
+    html:`<p>كل يوم تنتهي فيه مناوبة TechCart، تقوم محاسبة المتجر بجمع فواتير المبيعات والمشتريات (المستندات الأصلية)، وتُسجل كل عملية بيع جهاز أو شراء مخزون جديد في <b>دفتر اليومية</b> بترتيبها الزمني: التاريخ، الحسابات المدينة والدائنة، وشرح مختصر لكل عملية.</p>
+    <p>في نهاية الأسبوع، تُرحّل كل عملية إلى الحساب الخاص بها في <b>دفتر الأستاذ</b>: حساب "المبيعات" يجمع كل عمليات البيع، وحساب "الخزينة" يجمع كل الحركة النقدية، وحساب "المخزون" يتتبع الأجهزة الداخلة والخارجة — كل حساب مستقل تماماً بجانبيه المدين والدائن.</p>
+    <p>وفي نهاية الشهر، قبل تسليم أي تقرير للمستثمرين المهتمين بـ TechCart، تُعِد المحاسبة <b>ميزان المراجعة</b>: تجمع كل الأرصدة المدينة في عمود، والدائنة في عمود آخر. إذا لم يتساوَ العمودان، فهذا إنذار بوجود خطأ في مكان ما — ربما قيد مُرحّل بجانب خاطئ، أو رقم منسوخ بشكل غلط.</p>`
+  },
+  bank:[
+    { q:'ما هي الخطوة الأولى في الدورة المحاسبية؟', options:['إعداد القوائم المالية','استلام وإعداد المستندات الأصلية المؤيدة','إعداد ميزان المراجعة','إثبات قيود الإقفال'], correct:1 },
+    { q:'ما اسم الدفتر الذي تُسجَّل فيه عمليات TechCart اليومية بتسلسل زمني أولاً قبل أي دفتر آخر؟', options:['دفتر الأستاذ','دفتر اليومية','ميزان المراجعة','سجل المخزون'], correct:1 },
+    { q:'دفتر الأستاذ يُفتح فيه حساب مستقل لكل بند يأخذ شكل حرف معين، ما هو؟', options:['حرف L','حرف T','حرف V','حرف X'], correct:1 },
+    { q:'ما الهدف الأساسي من إعداد ميزان المراجعة؟', options:['حساب الأرباح مباشرة','التأكد من دقة التسجيل والترحيل استناداً لتوازن القيد المزدوج','تسجيل المبيعات فقط','إغلاق الحسابات نهائياً'], correct:1 },
+    { q:'توازن ميزان مراجعة TechCart، فهل هذا يعني عدم وجود أي خطأ محاسبي إطلاقاً؟', options:['نعم، توازنه دليل قاطع دائماً','لا، فقد توجد أخطاء متكافئة أو قيد كامل محذوف','فقط إذا كان المتجر صغيراً','لا علاقة بين التوازن والأخطاء'], correct:1 },
+    { q:'كم عدد خطوات الدورة المحاسبية الكاملة كما وردت في الملخص؟', options:['5 خطوات','6 خطوات','8 خطوات','10 خطوات'], correct:2 }
+  ]
+},
+{
+  id:4, title:'عمليات رأس المال', file:'الدرس 04 — عمليات رأس المال',
+  sections:[
+    { heading:'تكوين رأس المال نقدياً', html:`
+      <p>رأس المال بطبيعته <b>حساب دائن</b>، ويزيد بالإيداع:</p>
+      <ul>
+        <li>إيداع نقداً بالخزينة: من ح/ الخزينة — إلى ح/ رأس المال.</li>
+        <li>إيداع نقداً بالبنك: من ح/ البنك — إلى ح/ رأس المال.</li>
+        <li>إيداع مختلط (جزء خزينة وجزء بنك): من مذكورين (خزينة، بنك) — إلى ح/ رأس المال.</li>
+      </ul>` },
+    { heading:'تكوين رأس المال بأصول وخصوم عينية', html:`
+      <p><b>بأصول مختلفة:</b> من مذكورين (أراضٍ، مبانٍ، سيارات...) — إلى ح/ رأس المال (يساوي مجموع الأصول المقدمة).</p>
+      <p><b>بأصول وخصوم معاً (منشأة قائمة):</b> الأصول تُقيَّد في جانب المدين، بينما الخصوم ورأس المال (كمتمم حسابي) في جانب الدائن.</p>
+      <p style="direction:ltr; text-align:left; font-family:var(--mono); font-size:0.85rem; color:var(--text-dim);">من مذكورين (كافة الأصول) — إلى مذكورين (الدائنون، أ.د، رأس المال)</p>` }
+  ],
+  scenario:{
+    title:'💼 تطبيق عملي — كيف موّل أحمد TechCart',
+    html:`<p>عندما بدأ أحمد TechCart، أودع 50,000 ريال نقداً بالخزينة كرأس مال ابتدائي:</p>
+    <div class="entry">من ح/ الخزينة 50,000 — إلى ح/ رأس المال 50,000</div>
+    <p>وبعد أشهر، قرر توسيع النشاط بضخ تمويل إضافي، فأودع جزءاً بالخزينة وجزءاً بالبنك في نفس العملية (إيداع مختلط).</p>
+    <p>لو افترضنا سيناريو مختلفاً: أن أحمد أسس TechCart ليس بالنقد فقط، بل بأصول كان يملكها بالفعل (لابتوب شخصي بقيمة 8,000 وسيارة توصيل بقيمة 40,000)، بالإضافة لقرض بنكي قائم عليه من قبل بقيمة 10,000 ريال — فإن رأس المال في هذه الحالة لن يساوي قيمة الأصول كاملة، بل <b>الأصول ناقص القرض</b>: (8,000 + 40,000) − 10,000 = 38,000 ريال هي رأس المال الفعلي، بينما تُقيَّد الأصول كاملة في المدين، ويُقيَّد القرض ورأس المال معاً في الدائن.</p>`
+  },
+  bank:[
+    { q:'ما طبيعة حساب "رأس المال" محاسبياً؟', options:['مدين دائماً','دائن دائماً','يتغير حسب الحالة','لا طبيعة ثابتة له'], correct:1 },
+    { q:'عند إيداع أحمد 50,000 ريال نقداً بالخزينة كرأس مال لـ TechCart، ما القيد الصحيح؟', options:['من ح/ رأس المال — إلى ح/ الخزينة','من ح/ الخزينة — إلى ح/ رأس المال','من ح/ المبيعات — إلى ح/ الخزينة','من ح/ الخزينة — إلى ح/ المشتريات'], correct:1 },
+    { q:'لو أسس أحمد TechCart بأصول متنوعة (أجهزة + سيارة توصيل) فقط، دون أي ديون قائمة، فإن رأس المال يساوي؟', options:['نصف قيمة الأصول','مجموع قيمة الأصول بالكامل','صفراً','قيمة السيارة فقط'], correct:1 },
+    { q:'لو أسس أحمد الشركة بأصول وبها أيضاً قرض قائم من قبل، كيف يُحسب رأس المال؟', options:['الأصول فقط','الأصول ناقص الخصوم','الأصول زائد الخصوم','الخصوم فقط'], correct:1 },
+    { q:'عند التأسيس بأصول وخصوم معاً، أين تُسجَّل الأصول في القيد المحاسبي؟', options:['الجانب الدائن','الجانب المدين','لا تُسجَّل مطلقاً','في هامش القيد فقط'], correct:1 },
+    { q:'الإيداع "المختلط" لرأس المال (جزء خزينة وجزء بنك في نفس العملية) يُسجَّل باستخدام؟', options:['قيد بسيط بحساب واحد فقط','قيد "من مذكورين" لأكثر من حساب مدين','لا يمكن تسجيله محاسبياً','يُسجَّل كمصروف'], correct:1 }
+  ]
+},
+{
+  id:5, title:'المشتريات ومردوداتها', file:'الدرس 05 — المشتريات',
+  sections:[
+    { heading:'المعالجة المحاسبية للمشتريات النقدية', html:`
+      <p>البضاعة نوعان: مشتريات (طبيعتها مدينة) ومبيعات (طبيعتها دائنة). في حالة الشراء الفوري:</p>
+      <ul>
+        <li>شراء نقداً عبر الخزينة: من ح/ المشتريات — إلى ح/ الخزينة.</li>
+        <li>شراء بشيك عبر البنك: من ح/ المشتريات — إلى ح/ البنك.</li>
+        <li>شراء بجزء نقدي وجزء شيك: من ح/ المشتريات — إلى مذكورين (خزينة، بنك).</li>
+      </ul>` },
+    { heading:'المشتريات الآجلة والمختلطة ومردودات المشتريات', html:`
+      <p><b>الشراء الآجل (على الحساب):</b> من ح/ المشتريات — إلى ح/ الدائنون (الجهة البائعة). وعند السداد لاحقاً: من ح/ الدائنون — إلى ح/ الخزينة أو البنك.</p>
+      <p><b>الشراء المختلط</b> (نقدي + شيك + آجل): من ح/ المشتريات — إلى مذكورين (خزينة، بنك، دائنون).</p>
+      <p><b>مردودات المشتريات</b> (طبيعتها دائنة، عكس المشتريات): عند رد بضاعة تالفة أو غير مطابقة: من ح/ الخزينة أو البنك أو الدائنون — إلى ح/ مردودات المشتريات.</p>` }
+  ],
+  scenario:{
+    title:'💼 تطبيق عملي — دورة توريد المخزون في TechCart',
+    html:`<p>يشتري TechCart دفعة من سماعات الأذن اللاسلكية بقيمة 15,000 ريال نقداً من الخزينة:</p>
+    <div class="entry">من ح/ المشتريات 15,000 — إلى ح/ الخزينة 15,000</div>
+    <p>وفي نفس الأسبوع، يشتري دفعة أكبر من الهواتف الذكية بقيمة 80,000 ريال بالأجل من "مورد الشرق للإلكترونيات"، على أن يُسدد خلال 30 يوماً:</p>
+    <div class="entry">من ح/ المشتريات 80,000 — إلى ح/ الدائنون (مورد الشرق) 80,000</div>
+    <p>وعند فحص الشحنة، يكتشف مسؤول المخزون أن 5 هواتف تالفة، فيقرر إرجاعها للمورد فوراً — وبما أن الشراء كان بالأجل، يُخصم مبلغ المرتجع من رصيد الدائنين:</p>
+    <div class="entry">من ح/ الدائنون (مورد الشرق) 4,000 — إلى ح/ مردودات المشتريات 4,000</div>`
+  },
+  bank:[
+    { q:'عند شراء TechCart بضاعة نقداً من الخزينة، ما القيد الصحيح؟', options:['من ح/ المشتريات — إلى ح/ الخزينة','من ح/ الخزينة — إلى ح/ المشتريات','من ح/ المبيعات — إلى ح/ الخزينة','من ح/ الدائنون — إلى ح/ المشتريات'], correct:0 },
+    { q:'عند الشراء الآجل من مورد الشرق للإلكترونيات، أي حساب يُقيَّد دائناً؟', options:['المشتريات','الخزينة','الدائنون','البنك'], correct:2 },
+    { q:'عند سداد TechCart مستحقات المورد لاحقاً، ما القيد الصحيح؟', options:['من ح/ الدائنون — إلى ح/ الخزينة أو البنك','من ح/ الخزينة — إلى ح/ الدائنون','من ح/ المشتريات — إلى ح/ الدائنون','من ح/ الدائنون — إلى ح/ المشتريات'], correct:0 },
+    { q:'ما الطبيعة المحاسبية لحساب "مردودات المشتريات"؟', options:['مدينة','دائنة','محايدة','تعتمد على نوع البضاعة'], correct:1 },
+    { q:'عند إرجاع TechCart بضاعة تالفة كانت قد اشترتها بالأجل، ما القيد الصحيح لمردودات المشتريات؟', options:['من ح/ الدائنون — إلى ح/ مردودات المشتريات','من ح/ مردودات المشتريات — إلى ح/ الدائنون','من ح/ المشتريات — إلى ح/ الدائنون','من ح/ الخزينة — إلى ح/ المشتريات'], correct:0 },
+    { q:'الشراء "المختلط" (نقد + شيك + آجل) في عملية واحدة يُسجَّل بقيد؟', options:['من ح/ المشتريات — إلى مذكورين (خزينة، بنك، دائنون)','ثلاثة قيود منفصلة إجبارياً','لا يمكن تسجيله محاسبياً','من مذكورين — إلى ح/ المشتريات فقط'], correct:0 }
+  ]
+},
+{
+  id:6, title:'المبيعات ومردوداتها', file:'الدرس 06 — المبيعات',
+  sections:[
+    { heading:'المعالجة المحاسبية للمبيعات النقدية', html:`
+      <p>المبيعات تمثّل إيراداً رئيسياً للمنشأة، وطبيعتها <b>دائنة</b>.</p>
+      <ul>
+        <li>بيع نقداً وتحصيل بالخزينة: من ح/ الخزينة — إلى ح/ المبيعات.</li>
+        <li>بيع وتحصيل القيمة بشيك: من ح/ البنك — إلى ح/ المبيعات.</li>
+        <li>بيع وتحصيل مختلط (نقدي وشيك): من مذكورين (خزينة، بنك) — إلى ح/ المبيعات.</li>
+      </ul>` },
+    { heading:'المبيعات الآجلة والمختلطة ومردودات المبيعات', html:`
+      <p><b>البيع الآجل (على الحساب):</b> من ح/ العملاء (المدينون) — إلى ح/ المبيعات. وعند التحصيل لاحقاً: من ح/ الخزينة أو البنك — إلى ح/ العملاء.</p>
+      <p><b>البيع المختلط</b> (نقدي + شيك + آجل): من مذكورين (خزينة، بنك، عميل) — إلى ح/ المبيعات.</p>
+      <p><b>مردودات المبيعات</b> (طبيعتها مدينة، عكس المبيعات): عند رد المشتري للبضاعة لعدم مطابقتها: من ح/ مردودات المبيعات — إلى ح/ الخزينة أو البنك أو العميل.</p>` }
+  ],
+  scenario:{
+    title:'💼 تطبيق عملي — مبيعات TechCart لعملاء مختلفين',
+    html:`<p>يبيع TechCart جهاز لابتوب لعميل فرد نقداً بقيمة 4,500 ريال بالخزينة:</p>
+    <div class="entry">من ح/ الخزينة 4,500 — إلى ح/ المبيعات 4,500</div>
+    <p>وفي نفس الأسبوع، يبيع دفعة من 20 جهازاً لشركة "مؤسسة الوادي للمقاولات" بالأجل بقيمة 90,000 ريال، على أن تسدد خلال 45 يوماً:</p>
+    <div class="entry">من ح/ العملاء (مؤسسة الوادي) 90,000 — إلى ح/ المبيعات 90,000</div>
+    <p>بعد أسبوعين، تكتشف مؤسسة الوادي عيب تصنيع في 3 أجهزة وتعيدها بقيمة 13,500 ريال:</p>
+    <div class="entry">من ح/ مردودات المبيعات 13,500 — إلى ح/ العملاء (مؤسسة الوادي) 13,500</div>
+    <p>وعند حلول أجل السداد، تحصّل TechCart المبلغ المتبقي (76,500 ريال) بشيك عبر البنك:</p>
+    <div class="entry">من ح/ البنك 76,500 — إلى ح/ العملاء (مؤسسة الوادي) 76,500</div>`
+  },
+  bank:[
+    { q:'ما الطبيعة المحاسبية لحساب "المبيعات"؟', options:['مدينة دائماً','دائنة دائماً','محايدة','تعتمد على طريقة الدفع'], correct:1 },
+    { q:'عند بيع TechCart جهازاً لعميل نقداً بالخزينة، ما القيد الصحيح؟', options:['من ح/ المبيعات — إلى ح/ الخزينة','من ح/ الخزينة — إلى ح/ المبيعات','من ح/ العملاء — إلى ح/ المبيعات','من ح/ الخزينة — إلى ح/ المشتريات'], correct:1 },
+    { q:'عند بيع TechCart بالأجل لمؤسسة الوادي، أي حساب يُقيَّد مديناً؟', options:['المبيعات','العملاء (المدينون)','الخزينة','الدائنون'], correct:1 },
+    { q:'عند تحصيل TechCart المبلغ المستحق من مؤسسة الوادي لاحقاً، ما القيد الصحيح؟', options:['من ح/ الخزينة أو البنك — إلى ح/ العملاء','من ح/ العملاء — إلى ح/ الخزينة','من ح/ المبيعات — إلى ح/ العملاء','من ح/ العملاء — إلى ح/ المبيعات'], correct:0 },
+    { q:'ما الطبيعة المحاسبية لحساب "مردودات المبيعات"؟', options:['دائنة','مدينة','محايدة','تعتمد على سبب الإرجاع'], correct:1 },
+    { q:'عند إرجاع مؤسسة الوادي أجهزة معيبة كانت قد اشترتها بالأجل، ما قيد مردودات المبيعات الصحيح؟', options:['من ح/ مردودات المبيعات — إلى ح/ العملاء','من ح/ العملاء — إلى ح/ مردودات المبيعات','من ح/ المبيعات — إلى ح/ العملاء','من ح/ الخزينة — إلى ح/ مردودات المبيعات'], correct:0 }
+  ]
+},
+{
+  id:7, title:'عمليات الخزينة والبنك', file:'الدرس 07 — الخزينة والبنك',
+  sections:[
+    { heading:'العمليات النقدية بالخزينة', html:`
+      <p><b>المقبوضات النقدية</b> (تجعل الخزينة مدينة): إيداع رأس مال، بيع بضاعة أو أصول نقداً، تحصيل إيرادات أو ديون من المدينين، سحب نقدي من البنك لإيداعه بالخزينة.</p>
+      <p><b>المدفوعات النقدية</b> (تجعل الخزينة دائنة): شراء بضاعة أو أصول نقداً، سداد المصروفات المتنوعة (مرتبات، إيجار)، سداد مستحقات الدائنين، إيداع نقدي من الخزينة بالبنك.</p>` },
+    { heading:'العمليات النقدية بالبنك', html:`
+      <p><b>الإيداعات والمتحصلات بشيكات</b> (البنك مدين): إيداع رأس مال، تحصيل ثمن مبيعات أو ديون العملاء بشيكات، تحويل الفائض من الخزينة للبنك.</p>
+      <p><b>المسحوبات والمدفوعات بشيكات</b> (البنك دائن): شراء بضاعة أو أصول بشيكات، سداد الدائنين والمصروفات الدورية بشيكات، سحب مبالغ لتغذية الخزينة.</p>` }
+  ],
+  scenario:{
+    title:'💼 تطبيق عملي — إدارة السيولة اليومية في TechCart',
+    html:`<p>يستلم أمين صندوق TechCart متحصلات المبيعات النقدية اليومية بالخزينة (نحو 6,000 ريال يومياً في المتوسط). نهاية كل أسبوع، وحفاظاً على أمان الأموال، يحوّل الفائض الزائد عن الحد الآمن للتشغيل اليومي إلى حساب البنك:</p>
+    <div class="entry">من ح/ البنك 30,000 — إلى ح/ الخزينة 30,000</div>
+    <p>وعندما يحين موعد سداد فاتورة كبيرة لمورد الشرق للإلكترونيات (25,000 ريال)، يُفضّل TechCart السداد بشيك عبر البنك بدل الخزينة، لتوثيق العملية وتسهيل التتبع المحاسبي:</p>
+    <div class="entry">من ح/ الدائنون (مورد الشرق) 25,000 — إلى ح/ البنك 25,000</div>
+    <p>وفي أحد الأيام، احتاجت الخزينة نقداً إضافياً لتغطية مصروفات تشغيلية عاجلة، فسحب المدير مبلغاً من البنك لتغذيتها:</p>
+    <div class="entry">من ح/ الخزينة 5,000 — إلى ح/ البنك 5,000</div>`
+  },
+  bank:[
+    { q:'أي من العمليات التالية تجعل خزينة TechCart "مدينة"؟', options:['سداد مصروفات الكهرباء نقداً','تحصيل ثمن بضاعة مباعة نقداً','شراء بضاعة نقداً','إيداع نقدي بالبنك'], correct:1 },
+    { q:'أي من العمليات التالية تجعل خزينة TechCart "دائنة"؟', options:['تحصيل دين من عميل','إيداع رأس مال إضافي نقداً','سداد مستحقات أحد الموردين نقداً','سحب نقدي من البنك للخزينة'], correct:2 },
+    { q:'عند تحويل TechCart الفائض النقدي من الخزينة إلى البنك، ما القيد الصحيح؟', options:['من ح/ البنك — إلى ح/ الخزينة','من ح/ الخزينة — إلى ح/ البنك','من ح/ الخزينة — إلى ح/ رأس المال','من ح/ البنك — إلى ح/ المبيعات'], correct:0 },
+    { q:'عند سداد TechCart فاتورة مورد كبير بشيك عبر البنك، أي حساب يُقيَّد دائناً؟', options:['المشتريات','البنك','الدائنون','الخزينة'], correct:1 },
+    { q:'تحصيل TechCart ثمن مبيعات بشيك من عميل يجعل حساب البنك؟', options:['مديناً','دائناً','لا يتأثر','يُقفل تلقائياً'], correct:0 },
+    { q:'سحب مبلغ من البنك لتغذية خزينة الفرع يجعل حساب البنك؟', options:['مديناً','دائناً','محايداً','لا علاقة له بالعملية'], correct:1 }
+  ]
+},
+{
+  id:8, title:'الخصم التجاري والنقدي', file:'الدرس 08 — الخصومات',
+  sections:[
+    { heading:'عمليات الخصم — الخصم التجاري', html:`
+      <p><b>المفهوم:</b> مبلغ مالي يتنازل عنه البائع للمشتري لتنشيط المبيعات والمحافظة على العملاء.</p>
+      <p><b>القاعدة الذهبية:</b> الخصم التجاري <b>لا يظهر نهائياً</b> في الدفاتر المحاسبية (لا للبائع ولا للمشتري).</p>
+      <p>يتم استبعاد قيمة الخصم وتسجيل العملية بـ"الصافي" (قيمة البضاعة الكلية ناقصاً الخصم)، ويُشار له فقط في شرح القيد دون أن يظهر كرقم مستقل.</p>` },
+    { heading:'عمليات الخصم — الخصم النقدي (خصم تعجيل السداد)', html:`
+      <p><b>المفهوم:</b> خصم يمنحه البائع للمشتري بشرط سداد المشتري خلال مهلة محددة. هذا الخصم يظهر بدفاتر الطرفين.</p>
+      <p><b>في دفاتر البائع (خصم مسموح به):</b> من مذكورين (خزينة/بنك، خصم مسموح به) — إلى ح/ الجهة المشترية.</p>
+      <p><b>في دفاتر المشتري (خصم مكتسب):</b> من ح/ الجهة البائعة — إلى مذكورين (خزينة/بنك، خصم مكتسب).</p>
+      <p><b>الاحتمالات:</b> سداد مبكر (يستحق الخصم كاملاً)، سداد متأخر (لا يستحق)، سداد جزئي (يستحق على الجزء المسدد فقط ضمن المهلة).</p>` }
+  ],
+  scenario:{
+    title:'💼 تطبيق عملي — سياسة التسعير والتحصيل في TechCart',
+    html:`<p>عندما يشتري تاجر جملة كمية كبيرة من TechCart بقيمة 100,000 ريال، يمنحه المتجر خصماً تجارياً 10% لتشجيعه على الشراء بالجملة. النتيجة: تُسجَّل عملية البيع مباشرة بالصافي (90,000 ريال) في دفاتر TechCart، ولا يظهر رقم "10,000 ريال" كحساب مستقل في أي مكان — فقط يُذكر في شرح القيد أنه "بعد خصم تجاري 10%".</p>
+    <p>أما في حالة مختلفة، يبيع TechCart بضاعة بالأجل لعميل بقيمة 20,000 ريال، ويمنحه خصم تعجيل سداد 2% إذا سدد خلال 10 أيام من تاريخ الفاتورة. إذا سدد العميل خلال المهلة، يُسجَّل القيد التالي في دفاتر TechCart:</p>
+    <div class="entry">من مذكورين: الخزينة 19,600 + خصم مسموح به 400 — إلى ح/ العملاء 20,000</div>
+    <p>أما إذا سدد العميل بعد انتهاء العشرة أيام، فلا يستحق أي خصم، ويُسدد المبلغ كاملاً (20,000 ريال).</p>`
+  },
+  bank:[
+    { q:'هل يظهر الخصم التجاري في دفاتر TechCart أو دفاتر العميل؟', options:['يظهر في دفاتر البائع فقط','يظهر في دفاتر المشتري فقط','لا يظهر نهائياً في دفاتر أي من الطرفين','يظهر في دفاتر كليهما'], correct:2 },
+    { q:'كيف تُسجَّل عملية البيع في الدفاتر عند منح خصم تجاري؟', options:['بالقيمة الإجمالية قبل الخصم','بالقيمة الصافية بعد خصم الخصم التجاري','بقيمة الخصم فقط','لا تُسجَّل العملية إطلاقاً'], correct:1 },
+    { q:'ما اسم الخصم الذي يظهر في دفاتر البائع عند منح عميل خصماً لسداده مبكراً؟', options:['خصم تجاري','خصم مسموح به','خصم مكتسب','مردودات مبيعات'], correct:1 },
+    { q:'من منظور المشتري الذي استفاد من خصم تعجيل السداد، كيف يُسمى هذا الخصم في دفاتره؟', options:['خصم مسموح به','خصم مكتسب','خصم تجاري','مردودات مشتريات'], correct:1 },
+    { q:'عميل TechCart سدد نصف قيمة الفاتورة فقط خلال المهلة المحددة لخصم التعجيل. كيف يُحتسب الخصم؟', options:['على كامل الفاتورة','لا يستحق أي خصم','على النصف المسدد فقط ضمن المهلة','يتضاعف الخصم'], correct:2 },
+    { q:'عميل سدد بعد انتهاء مهلة خصم التعجيل المحددة، هل يستحق الخصم النقدي؟', options:['نعم كاملاً','لا يستحق أي خصم','نصف الخصم فقط','يعتمد على رغبة البائع فقط دون قاعدة'], correct:1 }
+  ]
+},
+{
+  id:9, title:'الأوراق التجارية', file:'الدرس 09 — الأوراق التجارية',
+  sections:[
+    { heading:'الأوراق التجارية (مفاهيم وأنواع)', html:`
+      <p><b>المفهوم:</b> تعهد كتابي لدفع مبلغ مالي محدد في تاريخ محدد (استحقاق)، ترتبط غالباً بالبيوع الآجلة لضمان الحقوق.</p>
+      <p><b>الأنواع:</b> أوراق الدفع (التزام صادر من المشتري)، وأوراق القبض (حق مكتسب للبائع). تشمل الكمبيالات والسندات الإذنية.</p>
+      <p><b>تصرفات البائع (المستفيد) بالورقة:</b> الاحتفاظ بها وتحصيلها في تاريخ الاستحقاق، تحصيل قيمتها قبل الاستحقاق، خصم الورقة لدى البنك، تظهيرها (تحويلها) لطرف ثالث، رفض المسحوب عليه السداد (بروتستو)، تجديد الورقة المرفوضة.</p>` },
+    { heading:'المعالجة المحاسبية للأوراق التجارية', html:`
+      <p><b>في دفاتر المشتري (المسحوب عليه):</b> عند قبول الكمبيالة: من ح/ المشتريات — إلى ح/ أوراق دفع. عند السداد بالاستحقاق: من ح/ أوراق دفع — إلى ح/ الخزينة أو البنك.</p>
+      <p><b>في دفاتر البائع (الساحب/المستفيد):</b> عند البيع وسحب الكمبيالة: من ح/ أوراق قبض — إلى ح/ المبيعات. عند التحصيل بالاستحقاق: من ح/ الخزينة أو البنك — إلى ح/ أوراق القبض.</p>` }
+  ],
+  scenario:{
+    title:'💼 تطبيق عملي — تمويل السيولة عبر الأوراق التجارية في TechCart',
+    html:`<p>باع TechCart دفعة كبيرة من الأجهزة لمؤسسة الوادي للمقاولات بقيمة 60,000 ريال، واتفق الطرفان على أن تُصدر مؤسسة الوادي كمبيالة تستحق السداد بعد 90 يوماً بدلاً من الدفع الفوري:</p>
+    <div class="entry">من ح/ أوراق قبض 60,000 — إلى ح/ المبيعات 60,000</div>
+    <p>بعد شهر، احتاج TechCart سيولة نقدية عاجلة لتوريد شحنة جديدة، فقرر عدم انتظار الـ 90 يوماً كاملة، وقام بخصم الكمبيالة لدى البنك — أي حصل على قيمتها فوراً نقداً مقابل تنازله عن نسبة بسيطة من قيمتها كمقابل خصم للبنك.</p>
+    <p>وفي حالة مغايرة تخيلية: لو رفضت مؤسسة الوادي السداد في تاريخ الاستحقاق، يُسمى هذا الإجراء محاسبياً وقانونياً "بروتستو" (احتجاج عدم الدفع)، وعندها يمكن لـ TechCart إما اللجوء للقضاء لتحصيل حقه، أو الاتفاق مع مؤسسة الوادي على تجديد الورقة بموعد استحقاق جديد.</p>`
+  },
+  bank:[
+    { q:'الورقة التجارية هي؟', options:['تعهد شفهي غير موثق','تعهد كتابي لدفع مبلغ محدد في تاريخ استحقاق محدد','نوع من أنواع الخصم التجاري','إيصال استلام بضاعة فقط'], correct:1 },
+    { q:'بالنسبة لـ TechCart كبائع يستلم الكمبيالة من عميله، تُسمى هذه الورقة؟', options:['ورقة دفع','ورقة قبض','سند دين عام','إيصال أمانة'], correct:1 },
+    { q:'عند استلام TechCart الكمبيالة من مؤسسة الوادي مقابل بيع بضاعة، ما القيد الصحيح؟', options:['من ح/ أوراق قبض — إلى ح/ المبيعات','من ح/ المبيعات — إلى ح/ أوراق قبض','من ح/ أوراق دفع — إلى ح/ المبيعات','من ح/ العملاء — إلى ح/ أوراق قبض'], correct:0 },
+    { q:'عندما قرر TechCart خصم الورقة لدى البنك قبل الاستحقاق، ماذا يحدث؟', options:['يحصل على كامل القيمة بعد الاستحقاق فقط دون تغيير','يحصل على القيمة فوراً مقابل تنازله عن نسبة بسيطة كمقابل خصم','يفقد حقه في الورقة بالكامل مجاناً','لا يمكن ذلك محاسبياً أو قانونياً'], correct:1 },
+    { q:'إذا رفض المسحوب عليه سداد الورقة في تاريخ الاستحقاق، يُطلق على هذا الإجراء محاسبياً؟', options:['تجديد الورقة','بروتستو (احتجاج عدم الدفع)','تظهير الورقة','خصم الورقة'], correct:1 },
+    { q:'في دفاتر مؤسسة الوادي (المشتري الذي أصدر الكمبيالة)، عند قبول الكمبيالة يُقيَّد الحساب المقابل باسم؟', options:['أوراق قبض','أوراق دفع','المبيعات','الدائنون'], correct:1 }
+  ]
+},
+{
+  id:10, title:'الترحيل والترصيد وميزان المراجعة', file:'الدرس 10 — الترحيل والترصيد',
+  sections:[
+    { heading:'الترحيل إلى دفتر الأستاذ والترصيد', html:`
+      <p><b>الترحيل:</b> فتح حساب مستقل (على شكل حرف T) لكل بند ورد في دفتر اليومية. تُنقل المبالغ المدينة إلى الجانب الأيمن للحساب، والمبالغ الدائنة إلى الجانب الأيسر، مع كتابة اسم الحساب المقابل في حقل البيان لتوضيح سبب الحركة.</p>
+      <p><b>الترصيد:</b> يتم جمع كلا الجانبين، ويُكتب المجموع الأكبر أسفل الجانبين معاً. المتمم الحسابي (الفرق بين المجموعين) يُسمى "رصيد مرحل" ويُكتب في الجانب الأضعف، ثم يُنقل للجانب العكسي في بداية الفترة التالية باسم "رصيد منقول"، ويمثل الطبيعة الحقيقية للحساب.</p>` },
+    { heading:'إعداد ميزان المراجعة', html:`
+      <p><b>الوظيفة:</b> كشف يُستخدم للتأكد من الدقة الحسابية لعمليات التسجيل في اليومية، والترحيل للأستاذ، والترصيد، وذلك استناداً لقاعدة توازن القيد المزدوج.</p>
+      <p><b>الشكل:</b> يتكون من عمود للأرصدة المدينة، وعمود للأرصدة الدائنة، واسم الحساب.</p>
+      <p><b>القاعدة الأساسية:</b> يجب أن يتطابق إجمالي الأرصدة المدينة مع إجمالي الأرصدة الدائنة. وإذا لم يتطابقا، فهذا تأكيد على وجود أخطاء محاسبية يجب اكتشافها.</p>
+      <p><b>ملاحظة مهمة:</b> توازن الميزان ليس دليلاً قاطعاً على صحة الحسابات تماماً، فقد توجد أخطاء متكافئة أو قيد كامل محذوف بطريق الخطأ.</p>` }
+  ],
+  scenario:{
+    title:'💼 تطبيق عملي — إغلاق الدفاتر الشهرية لدى محاسب TechCart',
+    html:`<p>في نهاية كل شهر، يجمع محاسب TechCart كل القيود المسجلة في دفتر اليومية، ويبدأ بترحيلها حساباً حساباً. حساب "الخزينة" مثلاً يُفتح له صفحة مستقلة على شكل حرف T: كل مبلغ دخل للخزينة (مقبوضات) يُسجَّل في الجانب المدين، وكل مبلغ خرج منها (مدفوعات) في الجانب الدائن.</p>
+    <p>في نهاية الشهر، يجمع المحاسب جانبي حساب الخزينة، ويجد أن مجموع المدين 180,000 ومجموع الدائن 165,000 — الفرق (15,000 ريال) هو الرصيد الفعلي المتبقي بالخزينة، ويُرحَّل كـ"رصيد منقول" ليكون نقطة البداية للشهر القادم.</p>
+    <p>وبعد ترصيد كل الحسابات (المبيعات، المشتريات، العملاء، الدائنون...)، يُعِد المحاسب ميزان المراجعة النهائي: يضع كل رصيد مدين في عموده، وكل رصيد دائن في عموده. إذا تساوى المجموعان، يشعر بالاطمئنان لتسليم التقرير للمستثمرين — لكنه يعرف جيداً أن هذا التوازن وحده لا يضمن خلو الدفاتر من كل خطأ ممكن.</p>`
+  },
+  bank:[
+    { q:'عملية "الترحيل" في المحاسبة تعني؟', options:['نقل قيود اليومية إلى حسابات مستقلة بدفتر الأستاذ','إعداد الميزانية العمومية مباشرة','حذف القيود الخاطئة','إغلاق الحسابات نهائياً'], correct:0 },
+    { q:'"الترصيد" هو؟', options:['تسجيل قيد جديد بدفتر اليومية','تحديد رصيد كل حساب بجمع جانبيه وإيجاد المتمم الحسابي','إعداد ميزان المراجعة مباشرة','حذف حساب من الدفاتر'], correct:1 },
+    { q:'ما اسم الرصيد الذي يُنقل إلى بداية الفترة المالية التالية؟', options:['رصيد مرحل','رصيد منقول','رصيد مبدئي','رصيد وهمي'], correct:1 },
+    { q:'ميزان المراجعة يتكون بشكل أساسي من؟', options:['عمود واحد فقط لكل الأرصدة','عمود للأرصدة المدينة وعمود للأرصدة الدائنة','ثلاثة أعمدة للمصروفات فقط','جدول سردي بلا أعمدة'], correct:1 },
+    { q:'إذا كان إجمالي الأرصدة المدينة في ميزان مراجعة TechCart لا يساوي إجمالي الأرصدة الدائنة، فهذا يدل على؟', options:['كل شيء سليم ولا داعي للقلق','وجود خطأ محاسبي يجب اكتشافه وتصحيحه','أن الشركة حققت ربحاً','أن الشركة حققت خسارة'], correct:1 },
+    { q:'هل توازن ميزان المراجعة يضمن خلو الدفاتر من كل الأخطاء تماماً؟', options:['نعم بشكل مطلق دائماً','لا، فقد توجد أخطاء متكافئة أو قيود كاملة محذوفة','فقط إذا كانت الشركة صغيرة الحجم','لا علاقة للتوازن بوجود الأخطاء من الأساس'], correct:1 }
+  ]
+},
+{
+  id:11, title:'الحسابات الختامية والميزانية والتسويات', file:'الدرس 11 — الإقفال والميزانية',
+  sections:[
+    { heading:'الحسابات الختامية — حساب المتاجرة', html:`
+      <p><b>الهدف:</b> تحديد نتيجة أعمال الوحدة من العمليات التجارية البحتة (بيع وشراء) للوصول إلى مجمل الربح أو مجمل الخسارة.</p>
+      <p><b>الجانب المدين:</b> بضاعة أول المدة، المشتريات، مردودات المبيعات، ومصروفات الشراء المباشرة (نقل مشتريات، عمولة شراء، رسوم جمركية).</p>
+      <p><b>الجانب الدائن:</b> المبيعات، مردودات المشتريات، وبضاعة آخر المدة.</p>
+      <p><b>الإقفال:</b> الرصيد المتمم يُرحل إلى حساب الأرباح والخسائر (مجمل الربح يُرحل للجانب الدائن، ومجمل الخسارة للجانب المدين).</p>` },
+    { heading:'الحسابات الختامية — حساب الأرباح والخسائر', html:`
+      <p><b>الهدف:</b> تجميع كافة الإيرادات والمصروفات غير المباشرة لتحديد النتيجة النهائية للأعمال (صافي الربح أو صافي الخسارة).</p>
+      <p><b>الجانب المدين:</b> مجمل الخسارة (إن وجد)، وكافة المصروفات (إيجار، مرتبات، كهرباء، خصم مسموح به، مصاريف إدارية وتوزيعية، إهلاك الأصول).</p>
+      <p><b>الجانب الدائن:</b> مجمل الربح (إن وجد)، وكافة الإيرادات المتنوعة (إيراد أوراق مالية، إيراد عقار، خصم مكتسب، عمولة مستلمة).</p>` },
+    { heading:'الميزانية العمومية والتسويات الجردية', html:`
+      <p><b>الميزانية العمومية:</b> توضح المركز المالي للوحدة في لحظة زمنية معينة (غالباً 31/12)، وتتكون من جانبين متعادلين. جانب الأصول (ثابتة مخصوماً منها الإهلاك، ومتداولة كالبضاعة والمدينين والخزينة والبنك)، وجانب الخصوم ورأس المال (رأس المال + صافي الربح أو ناقص الخسارة، والخصوم الثابتة والمتداولة).</p>
+      <p><b>التسويات الجردية:</b> تطبق أساس الاستحقاق بتحميل الفترة بما يخصها بدقة. إهلاك الأصول الثابتة يُحسب كنسبة سنوية من التكلفة ويظهر كمصروف في حساب الأرباح والخسائر، بينما يُطرح مجمعه من الأصل في الميزانية. مخزون آخر المدة يُدرج جردياً في مكانين معاً: الجانب الدائن لحساب المتاجرة، وجانب الأصول المتداولة بالميزانية.</p>` }
+  ],
+  scenario:{
+    title:'💼 تطبيق عملي — إقفال السنة المالية الأولى لـ TechCart',
+    html:`<p>في 31 ديسمبر، يبدأ محاسب TechCart بإعداد <b>حساب المتاجرة</b> لمعرفة نتيجة عمليات البيع والشراء البحتة: يضع في المدين بضاعة أول المدة والمشتريات ومصروفات الشحن، وفي الدائن المبيعات وبضاعة آخر المدة (المخزون المتبقي من الأجهزة). الفرق يظهر مجمل ربح 220,000 ريال.</p>
+    <p>يُرحَّل هذا المبلغ إلى <b>حساب الأرباح والخسائر</b>، حيث يُضاف له إيراد جانبي (عمولة من شركة شحن شريكة)، ويُطرح منه المصاريف الإدارية (إيجار المكتب، رواتب فريق الدعم، إهلاك أجهزة الكمبيوتر المكتبية 5,000 ريال). الناتج النهائي: صافي ربح 165,000 ريال.</p>
+    <p>أخيراً، يُعِد <b>الميزانية العمومية</b> ليعرض المركز المالي لـ TechCart في تلك اللحظة بالذات: الأصول (خزينة، بنك، مخزون متبقٍ، أجهزة مكتبية بعد خصم الإهلاك) في جانب، ومقابلها رأس المال مضافاً إليه صافي الربح، والخصوم (الدائنون المتبقون) في الجانب الآخر — وقيمة مخزون آخر المدة نفسها تظهر مرتين بالضبط: مرة في حساب المتاجرة، ومرة أخرى ضمن الأصول المتداولة بالميزانية.</p>`
+  },
+  bank:[
+    { q:'هدف حساب المتاجرة هو؟', options:['تحديد صافي الربح النهائي للشركة','تحديد مجمل الربح أو الخسارة من عمليات البيع والشراء فقط','عرض المركز المالي الكامل للشركة','تسجيل المصروفات الإدارية فقط'], correct:1 },
+    { q:'أي بند من التالي يظهر في الجانب الدائن لحساب المتاجرة؟', options:['بضاعة أول المدة','المشتريات','المبيعات وبضاعة آخر المدة','مصروفات الشراء المباشرة'], correct:2 },
+    { q:'حساب الأرباح والخسائر يهدف إلى؟', options:['تحديد مجمل الربح فقط','تجميع كل الإيرادات والمصروفات غير المباشرة للوصول لصافي الربح أو الخسارة','عرض الأصول والخصوم فقط','تسجيل المشتريات فقط'], correct:1 },
+    { q:'الميزانية العمومية توضح؟', options:['نتيجة الأعمال خلال فترة زمنية كاملة','المركز المالي للوحدة في لحظة زمنية معينة','المصروفات فقط','الإيرادات فقط'], correct:1 },
+    { q:'إهلاك أجهزة الكمبيوتر المكتبية لدى TechCart يُحسب كنسبة سنوية من؟', options:['صافي الربح','التكلفة الأصلية للأصل','رأس المال','المبيعات'], correct:1 },
+    { q:'مخزون آخر المدة (البضاعة المتبقية) يظهر في مكانين معاً هما؟', options:['حساب المتاجرة والميزانية العمومية','حساب الأرباح والخسائر فقط','رأس المال فقط','لا يظهر في أي مكان حتى يُباع'], correct:0 }
+  ]
+}
+];
+const TOTAL_LESSONS = LESSONS.length;
+
+/* ========================================================= */
+const PASS_HYPE = [
+  '🔥 ممتاز! أساسك المحاسبي بيترسّخ صح.',
+  '💪 قوي جداً، فاهم القاعدة مش بس حافظها.',
+  '🚀 أداء رائع، خطوة تانية للاحتراف.',
+  '🧠 تفكير محاسبي سليم، استمر بنفس المستوى.',
+  '🎯 إجابات دقيقة، شغل محاسب محترف فعلاً.',
+  '🏁 اجتياز قوي، الدرس القادم في انتظارك.'
+];
+let lastHype = -1;
+function pickHype(){
+  let i; do{ i = Math.floor(Math.random()*PASS_HYPE.length); } while(i===lastHype && PASS_HYPE.length>1);
+  lastHype = i; return PASS_HYPE[i];
+}
+function pickN(arr, n){
+  const copy = arr.map((v,i)=>({v,i}));
+  for(let i=copy.length-1;i>0;i--){ const j=Math.floor(Math.random()*(i+1)); [copy[i],copy[j]]=[copy[j],copy[i]]; }
+  return copy.slice(0, n).map(x=>x.v);
+}
+
+/* ---------- Persistent progress (survives reload/close) ----------
+   Uses the Claude artifact storage API when available (window.storage),
+   and falls back to localStorage when the file is opened standalone. */
+const PROGRESS_KEY = 'cipher73-techcart-progress';
+const hasArtifactStorage = () => (typeof window !== 'undefined' && !!window.storage);
+
+async function storageGet(key){
+  if(hasArtifactStorage()){
+    try{
+      const res = await window.storage.get(key, false);
+      if(res) return res.value;
+      return null;
+    }catch(e){ /* fall through to localStorage below */ }
+  }
+  try{ return localStorage.getItem(key); }catch(e){ return null; }
+}
+async function storageSet(key, value){
+  if(hasArtifactStorage()){
+    try{
+      await window.storage.set(key, value, false);
+      return;
+    }catch(e){ /* fall through to localStorage below */ }
+  }
+  try{ localStorage.setItem(key, value); }catch(e){ /* no storage available at all; progress just won't persist */ }
+}
+async function storageClear(key){
+  if(hasArtifactStorage()){
+    try{ await window.storage.delete(key, false); }catch(e){ /* ignore */ }
+  }
+  try{ localStorage.removeItem(key); }catch(e){ /* ignore */ }
+}
+
+async function saveProgress(){
+  const payload = JSON.stringify({
+    unlockedIndex: state.unlockedIndex,
+    passed: Array.from(state.passed),
+    viewing: state.viewing
+  });
+  await storageSet(PROGRESS_KEY, payload);
+}
+async function loadProgress(){
+  const raw = await storageGet(PROGRESS_KEY);
+  if(!raw) return null;
+  try{ return JSON.parse(raw); }catch(e){ return null; }
+}
+
+let state = { unlockedIndex:0, passed:new Set(), viewing:0 };
+let quizState = null;
+
+const lessonList = document.getElementById('lessonList');
+const tabbar = document.getElementById('tabbar');
+const contentWrap = document.getElementById('contentWrap');
+const hpFill = document.getElementById('hpFill');
+const hpLabel = document.getElementById('hpLabel');
+const hpMotivate = document.getElementById('hpMotivate');
+const quizOverlay = document.getElementById('quizOverlay');
+const quizBody = document.getElementById('quizBody');
+const quizHeaderTitle = document.getElementById('quizHeaderTitle');
+const quizCounter = document.getElementById('quizCounter');
+const finalExamRow = document.getElementById('finalExamRow');
+const finalExamIcon = document.getElementById('finalExamIcon');
+const finalExamTag = document.getElementById('finalExamTag');
+
+function renderSidebar(){
+  lessonList.innerHTML = '';
+  LESSONS.forEach((lesson, i)=>{
+    const isUnlocked = i <= state.unlockedIndex;
+    const isDone = state.passed.has(i);
+    const isActive = state.viewing === i;
+    const item = document.createElement('div');
+    item.className = 'lesson-item ' + (isUnlocked?'':'locked') + (isActive?' active':'');
+    item.tabIndex = isUnlocked ? 0 : -1;
+    item.innerHTML = `<span>${isDone?'✓':(isUnlocked?'📘':'🔒')}</span><span class="fname">${lesson.title}</span><span class="num">${String(i+1).padStart(2,'0')}</span>`;
+    if(isUnlocked){
+      item.addEventListener('click', ()=>openLesson(i));
+      item.addEventListener('keydown', e=>{ if(e.key==='Enter') openLesson(i); });
+    }
+    lessonList.appendChild(item);
+  });
+  const allDone = state.passed.size === TOTAL_LESSONS;
+  finalExamRow.className = 'final-exam-row' + (allDone?' ready':'');
+  finalExamIcon.textContent = allDone ? '🏆' : '🔒';
+  finalExamTag.textContent = allDone ? 'كل التحية! اضغط لبدء الاختبار' : 'يُفتح بعد اجتياز الدروس الـ 11';
+  finalExamRow.onclick = allDone ? startFinalExam : null;
+}
+
+function renderHeaderProgress(){
+  const pct = (state.passed.size / TOTAL_LESSONS) * 100;
+  hpFill.style.width = pct + '%';
+  hpLabel.textContent = `التقدم الكلي: ${state.passed.size} / ${TOTAL_LESSONS} دروس`;
+  let msg = 'يلا نبدأ! 🚀';
+  if(pct >= 100) msg = '🏆 أنجزت المنهج كاملاً! جاهز للاختبار النهائي';
+  else if(pct >= 75) msg = 'خطوات قليلة على القمة 🔥';
+  else if(pct >= 50) msg = 'نص الطريق تمام! استمر 💪';
+  else if(pct >= 25) msg = 'ربع الطريق خلص! يلا 🎯';
+  else if(pct > 0) msg = 'بداية قوية، كمّل 🚀';
+  hpMotivate.textContent = msg;
+
+  document.querySelectorAll('.hp-milestone').forEach(m=>{
+    const threshold = parseInt(m.style.right);
+    m.classList.toggle('passed', pct >= threshold);
+  });
+}
+
+function openLesson(i){
+  if(i > state.unlockedIndex) return;
+  state.viewing = i;
+  saveProgress();
+  const lesson = LESSONS[i];
+  renderSidebar();
+
+  tabbar.innerHTML = `<div class="tab"><span class="dot"></span>${lesson.file}</div>`;
+
+  let sectionsHtml = lesson.sections.map(s=>`
+    <div class="section-title">📖 ${s.heading}</div>
+    <div class="block">${s.html}</div>
+  `).join('');
+
+  const scenarioHtml = `
+    <div class="scenario-box">
+      <div class="scenario-label">${lesson.scenario.title}</div>
+      ${lesson.scenario.html}
+    </div>
+  `;
+
+  const done = state.passed.has(i);
+
+  contentWrap.innerHTML = `
+    <h2 class="level-heading">الدرس ${String(i+1).padStart(2,'0')} — ${lesson.title}</h2>
+    <div class="level-sub">${lesson.sections.length} أقسام أكاديمية + سيناريو تطبيقي + اختبار من بنك ${lesson.bank.length} أسئلة</div>
+    ${sectionsHtml}
+    ${scenarioHtml}
+    <button class="run-quiz-btn" id="runQuizBtn">${done ? '✓ تم اجتياز هذا الدرس — إعادة الاختبار' : '▶ ابدأ اختبار الدرس (3 أسئلة عشوائية)'}</button>
+    ${done ? `<div class="lesson-complete-banner">🎉 اجتزت الدرس ${String(i+1).padStart(2,'0')} بنجاح! ${i < TOTAL_LESSONS-1 ? 'الدرس القادم متاح الآن.' : 'وصلت لآخر درس، الاختبار النهائي بانتظارك!'}</div>` : ''}
+  `;
+  document.getElementById('runQuizBtn').addEventListener('click', ()=>startLessonQuiz(i));
+}
+
+function startLessonQuiz(i){
+  const lesson = LESSONS[i];
+  const questions = pickN(lesson.bank, 3);
+  quizState = {
+    mode:'lesson', lessonIndex:i, questions, qIndex:0, correct:0,
+    onFinish:(passed)=>{
+      if(passed){
+        state.passed.add(i);
+        if(i === state.unlockedIndex && i < TOTAL_LESSONS - 1) state.unlockedIndex = i + 1;
+        renderHeaderProgress();
+        renderSidebar();
+        saveProgress();
+      }
+    },
+    onClose:()=>{ closeQuiz(); openLesson(i); }
+  };
+  quizHeaderTitle.textContent = `اختبار: ${lesson.title}`;
+  quizOverlay.classList.add('open');
+  renderQuizQuestion();
+}
+
+function startFinalExam(){
+  let allQuestions = [];
+  LESSONS.forEach(lesson=>{
+    pickN(lesson.bank, 2).forEach(q=> allQuestions.push({...q, lessonTitle:lesson.title}));
+  });
+  // shuffle full exam order
+  allQuestions = pickN(allQuestions, allQuestions.length);
+  quizState = {
+    mode:'final', questions:allQuestions, qIndex:0, correct:0,
+    onFinish:()=>{},
+    onClose:()=>{ closeQuiz(); }
+  };
+  quizHeaderTitle.textContent = 'الاختبار النهائي الشامل';
+  quizOverlay.classList.add('open');
+  renderQuizQuestion();
+}
+
+function renderQuizQuestion(){
+  const {questions, qIndex} = quizState;
+  const total = questions.length;
+  quizCounter.textContent = `${qIndex+1} / ${total}`;
+  const q = questions[qIndex];
+  quizBody.innerHTML = `
+    <div class="quiz-question">${q.q}</div>
+    <div id="optionsWrap"></div>
+    <div id="resultWrap"></div>
+  `;
+  const optionsWrap = document.getElementById('optionsWrap');
+  q.options.forEach((opt, idx)=>{
+    const btn = document.createElement('button');
+    btn.className = 'opt-btn';
+    btn.innerHTML = `<span class="tag">[${idx+1}]</span><span>${opt}</span>`;
+    btn.addEventListener('click', ()=>answerQuestion(idx));
+    optionsWrap.appendChild(btn);
+  });
+}
+
+function answerQuestion(idx){
+  const {questions, qIndex} = quizState;
+  const q = questions[qIndex];
+  const buttons = document.querySelectorAll('#optionsWrap .opt-btn');
+  buttons.forEach(b=>b.disabled = true);
+  const resultWrap = document.getElementById('resultWrap');
+  const isLast = qIndex === questions.length - 1;
+
+  if(idx === q.correct){
+    buttons[idx].classList.add('correct');
+    quizState.correct++;
+    resultWrap.innerHTML = `<div class="result-log pass">✓ إجابة صحيحة!</div>
+      <button class="next-btn" id="nextBtn">${isLast ? 'عرض النتيجة النهائية' : 'السؤال التالي →'}</button>`;
+  } else {
+    buttons[idx].classList.add('wrong');
+    if(q.correct !== undefined) buttons[q.correct].classList.add('correct');
+    resultWrap.innerHTML = `<div class="result-log fail">✗ إجابة غير صحيحة، الصح موضّح بالأعلى.</div>
+      <button class="next-btn" id="nextBtn">${isLast ? 'عرض النتيجة النهائية' : 'السؤال التالي →'}</button>`;
+  }
+  document.getElementById('nextBtn').addEventListener('click', ()=>{
+    if(isLast){ showQuizSummary(); }
+    else{ quizState.qIndex++; renderQuizQuestion(); }
+  });
+}
+
+function showQuizSummary(){
+  const {mode, questions, correct} = quizState;
+  const total = questions.length;
+  const pct = Math.round((correct/total)*100);
+
+  let passed, msg, sub;
+  if(mode === 'lesson'){
+    passed = correct >= 2; // 2 of 3
+    msg = passed ? pickHype() : 'قريب جداً! راجع الشرح وحاول تاني بأسئلة جديدة.';
+    sub = passed ? 'الدرس القادم اتفتح 🎉' : 'محتاج إجابتين صح من 3 على الأقل عشان تفتح الدرس الجاي.';
+  } else {
+    passed = pct >= 60;
+    if(pct >= 90) msg = '🏆 امتياز خارق! إتقان كامل للمنهج.';
+    else if(pct >= 75) msg = '🎖️ ممتاز جداً، فاهم المادة بعمق.';
+    else if(pct >= 60) msg = '✅ جيد، لكن فيه نقاط تستحق مراجعة.';
+    else msg = '📚 يُفضّل مراجعة الدروس اللي أخطأت فيها قبل إعادة المحاولة.';
+    sub = `أجبت بشكل صحيح على ${correct} من ${total} سؤال (${pct}%) عبر كل الدروس الـ 11.`;
+  }
+
+  quizBody.innerHTML = `
+    <div class="summary-score" style="color:${passed?'var(--olive)':'var(--amber)'}">${correct}/${total}</div>
+    <div class="summary-msg ${passed?'pass':'fail'}">${msg}</div>
+    <div class="summary-sub">${sub}</div>
+    <button class="next-btn" id="doneBtn">${mode==='lesson' ? (passed?'الذهاب للدرس القادم':'إغلاق ومحاولة لاحقاً') : 'إغلاق'}</button>
+  `;
+  document.getElementById('doneBtn').addEventListener('click', ()=>{
+    if(mode==='lesson'){
+      quizState.onFinish(passed);
+      closeQuiz();
+      const li = quizState.lessonIndex;
+      openLesson(passed ? Math.min(li+1, TOTAL_LESSONS-1) : li);
+    } else {
+      closeQuiz();
+    }
+  });
+}
+
+function closeQuiz(){ quizOverlay.classList.remove('open'); quizState = null; }
+document.getElementById('quizClose').addEventListener('click', ()=>{
+  if(quizState) quizState.onClose(); else closeQuiz();
+});
+quizOverlay.addEventListener('click', (e)=>{ if(e.target === quizOverlay){ if(quizState) quizState.onClose(); else closeQuiz(); } });
+
+/* init */
+(async function init(){
+  const saved = await loadProgress();
+  if(saved){
+    state.unlockedIndex = Math.min(saved.unlockedIndex || 0, TOTAL_LESSONS - 1);
+    state.passed = new Set(saved.passed || []);
+    state.viewing = Math.min(saved.viewing ?? 0, state.unlockedIndex);
+  }
+  renderSidebar();
+  renderHeaderProgress();
+  openLesson(state.viewing);
+})();
+
+const resetBtn = document.getElementById('resetProgressBtn');
+let resetArmed = false;
+let resetTimer = null;
+resetBtn.addEventListener('click', ()=>{
+  if(!resetArmed){
+    resetArmed = true;
+    resetBtn.textContent = '⚠️ متأكد؟ اضغط تاني للتأكيد';
+    resetTimer = setTimeout(()=>{ resetArmed = false; resetBtn.textContent = '🔄 إعادة تعيين التقدم'; }, 3000);
+    return;
+  }
+  clearTimeout(resetTimer);
+  resetArmed = false;
+  resetBtn.textContent = '🔄 إعادة تعيين التقدم';
+  state = { unlockedIndex:0, passed:new Set(), viewing:0 };
+  storageClear(PROGRESS_KEY);
+  renderSidebar();
+  renderHeaderProgress();
+  openLesson(0);
+});
+</script>
+</body>
+</html>
